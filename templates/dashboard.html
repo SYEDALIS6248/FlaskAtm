@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block screen %}
+<div class="h-full flex flex-col justify-between">
+    <!-- Header -->
+    <div class="text-center">
+        <h1 class="text-3xl font-bold text-gray-800">Sydx Bank</h1>
+        <p class="text-gray-600">Please select a transaction</p>
+    </div>
+
+    <!-- Main Content Area with Flanking Buttons -->
+    <div class="flex-grow flex items-center justify-center">
+        <div class="w-full flex justify-between items-center">
+            <!-- Left Side Actions -->
+            <div class="w-1/3 space-y-4 text-lg font-bold">
+                <a href="{{ url_for('withdraw') }}" class="block text-left bg-gray-600 text-white p-3 rounded-lg shadow-md hover:bg-gray-700 transition-colors">
+                    &lt; WITHDRAW
+                </a>
+                <a href="{{ url_for('deposit') }}" class="block text-left bg-gray-600 text-white p-3 rounded-lg shadow-md hover:bg-gray-700 transition-colors">
+                    &lt; DEPOSIT
+                </a>
+                <a href="{{ url_for('transactions') }}" class="block text-left bg-gray-600 text-white p-3 rounded-lg shadow-md hover:bg-gray-700 transition-colors">
+                    &lt; MINI STATEMENT
+                </a>
+            </div>
+
+            <!-- Center Welcome Message -->
+            <div class="w-1/3 text-center px-4">
+                 <div class="bg-white bg-opacity-70 p-4 rounded-lg shadow-inner">
+                    <p class="text-lg text-gray-700">Welcome</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ user.name }}</p>
+                </div>
+            </div>
+
+            <!-- Right Side Actions -->
+            <div class="w-1/3 space-y-4 text-lg font-bold">
+                <a href="{{ url_for('balance') }}" class="block text-right bg-gray-600 text-white p-3 rounded-lg shadow-md hover:bg-gray-700 transition-colors">
+                    BALANCE ENQUIRY &gt;
+                </a>
+                <a href="#" class="block text-right p-3 rounded-lg text-transparent cursor-default">
+                    <!-- This is an empty spacer -->
+                </a>
+                 <a href="{{ url_for('logout') }}" class="block text-right bg-red-500 text-white p-3 rounded-lg shadow-md hover:bg-red-600 transition-colors">
+                    CANCEL &gt;
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

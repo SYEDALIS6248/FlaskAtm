@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block screen %}
+<div class="h-full flex flex-col items-center justify-center text-center">
+    <div class="w-full max-w-xs bg-gray-50 p-4 rounded-lg shadow-inner border font-mono text-xs text-gray-800">
+        <h2 class="text-center font-bold text-base mb-2">TRANSACTION RECEIPT</h2>
+        <p class="text-center text-sm mb-4">SYDX BANK</p>
+        <hr class="border-dashed border-gray-400 my-2">
+        <div class="space-y-1 text-left">
+            <p><strong>DATE:</strong> {{ receipt.timestamp.strftime('%d-%m-%Y') }}</p>
+            <p><strong>TIME:</strong> {{ receipt.timestamp.strftime('%H:%M:%S') }}</p>
+            <p><strong>CARD NO:</strong> **** **** **** {{ receipt.card_last_4 }}</p>
+            <p><strong>TXN TYPE:</strong> <span class="font-bold uppercase">{{ receipt.txn_type }}</span></p>
+        </div>
+        <hr class="border-dashed border-gray-400 my-2">
+        <div class="space-y-1 text-left">
+            <p><strong>AMOUNT:</strong> ₹{{ "%.2f"|format(receipt.amount) }}</p>
+            <p><strong>AVAILABLE BAL:</strong> ₹{{ "%.2f"|format(receipt.new_balance) }}</p>
+        </div>
+        <hr class="border-dashed border-gray-400 my-2">
+        <p class="text-center font-bold my-4">Thank You!</p>
+    </div>
+    <div class="mt-6 w-full max-w-xs flex items-center justify-center space-x-4">
+        <button onclick="window.print()" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-colors">
+            PRINT
+        </button>
+        <a href="{{ url_for('dashboard') }}" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-colors text-center">
+            CANCEL
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+

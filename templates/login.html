@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block screen %}
+<div class="h-full flex flex-col items-center justify-center text-center">
+    <h1 class="text-3xl font-bold text-gray-800 mb-2">Welcome to SYDX Bank</h1>
+    <p class="text-gray-600 mb-8">Please enter your card number and PIN</p>
+    
+    <form id="screen-form" method="POST" class="w-full max-w-sm">
+        <div class="mb-4">
+            <label for="card_number" class="block text-gray-700 text-sm font-bold mb-2">Card Number:</label>
+            <input type="text" name="card_number" id="card_number" class="keypad-target shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-center text-2xl tracking-[.2em]" required autocomplete="off" placeholder="_ _ _ _  _ _ _ _  _ _ _ _">
+        </div>
+        <div class="mb-6">
+            <label for="pin" class="block text-gray-700 text-sm font-bold mb-2">PIN:</label>
+            <input type="password" name="pin" id="pin" class="keypad-target shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-center text-2xl tracking-[.5em]" required autocomplete="off" maxlength="4" placeholder="****">
+        </div>
+        <p class="text-xs text-gray-500 mt-4 text-center">Click a field to activate, then use the keypad. Press ENTER to submit.</p>
+    </form>
+</div>
+{% endblock %}
+

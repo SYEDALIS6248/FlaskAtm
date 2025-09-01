@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block screen %}
+<div class="h-full flex flex-col items-center justify-center text-center">
+    
+    {% if transactions is none %}
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Mini Statement</h1>
+        <p class="text-gray-600 mb-8">Please confirm your PIN to view recent transactions</p>
+        <form id="screen-form" method="POST" class="w-full max-w-sm">
+            <div class="mb-6">
+                <label for="pin" class="block text-gray-700 text-sm font-bold mb-2">Confirm PIN:</label>
+                <input type="password" name="pin" id="pin" class="keypad-target shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-center text-2xl tracking-[.5em]" required autocomplete="off" maxlength="4" placeholder="****">
+            </div>
+            <div class="flex items-center justify-between">
+                 <a href="{{ url_for('dashboard') }}" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition-colors text-center mr-2">
+                    CANCEL
+                </a>
+                <p class="text-xs text-gray-500 w-full text-center">Press ENTER on keypad to confirm.</p>
+            </div>
+        </form>
+    {% else %}
+        <div class="w-full h-full flex flex-col">
+            <div class="flex justify-between items-center mb-2">
+                <h1 class="text-3xl font-bold text-gray-800">Mini Statement</h1>
+                <div class="flex items-center space-x-2">
+                    <button onclick="window.print()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-colors">
+                        PRINT
+                    </button>
+                    <a href="{{ url_for('dashboard') }}" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-colors">
+                        CANCEL
+                    </a>
+                </div>
+            </div>
+            <p class="text-gray-600 mb-4">Your last 10 transactions:</p>
+
+            <div class="flex-grow bg-white p-2 rounded-lg shadow-inner overflow-y-auto">
+                <table class="w-full text-sm text-left">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-200 sticky top-0">
+                        <tr>
+                            <th scope="col" class="px-4 py-2">Date & Time</th>
+                            <th scope="col" class="px-4 py-2">Type</th>
+                            <th scope="col" class="px-4 py-2 text-right">Amount (₹)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for txn in transactions %}
+                        <tr class="border-b">
+                            <td class="px-4 py-1 font-mono">{{ txn.timestamp.strftime('%d-%m-%Y %H:%M') }}</td>
+                            <td class="px-4 py-1">
+                                {% if txn.txn_type == 'deposit' %}
+                                    <span class="font-bold text-green-600 uppercase">{{ txn.txn_type }}</span>
+                                {% else %}
+                                     <span class="font-bold text-red-600 uppercase">{{ txn.txn_type }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-4 py-1 text-right font-mono">{{ "%.2f"|format(txn.amount) }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="3" class="text-center p-4">No transactions found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+

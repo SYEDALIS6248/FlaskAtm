@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYDX ATM Machine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .atm-body {
+            background: linear-gradient(145deg, #d5d5d5, #fefefe);
+            box-shadow: 20px 20px 60px #b8b8b8, -20px -20px 60px #ffffff;
+        }
+        .keypad-btn {
+            background: linear-gradient(145deg, #e6e6e6, #ffffff);
+            box-shadow: 5px 5px 10px #cccccc, -5px -5px 10px #ffffff;
+            transition: all 0.1s ease-in-out;
+        }
+        .keypad-btn:active {
+            background: #e0e0e0;
+            box-shadow: inset 5px 5px 10px #cccccc, inset -5px -5px 10px #ffffff;
+            transform: translateY(2px);
+        }
+        .screen-glow {
+            box-shadow: 0 0 15px 2px rgba(77, 192, 253, 0.5), inset 0 0 10px rgba(0,0,0,0.5);
+        }
+        .slot {
+            background: #333; border-top: 2px solid #555; border-bottom: 2px solid #222;
+            box-shadow: inset 0 4px 6px rgba(0,0,0,0.5);
+        }
+        .slot-light {
+            width: 10px; height: 10px; border-radius: 50%;
+            background-color: #4CAF50;
+            box-shadow: 0 0 5px #4CAF50, 0 0 10px #4CAF50;
+            animation: standby-blink 2s infinite;
+        }
+        .slot-light.active-blink {
+            background-color: #FFD700;
+            box-shadow: 0 0 8px #FFD700, 0 0 15px #FFD700;
+            animation: active-blink-animation 0.5s infinite;
+        }
+        @keyframes standby-blink { 50% { opacity: 0.5; } }
+        @keyframes active-blink-animation { 50% { opacity: 0.2; } }
+    </style>
+</head>
+<body class="bg-gray-200">
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-6xl mx-auto rounded-xl atm-body p-6">
+            <div class="flex flex-col md:flex-row gap-6">
+                <!-- Left Side: Screen -->
+                <div class="w-full md:w-2/3 order-1 md:order-1">
+                    <div class="bg-gray-900 p-2 rounded-xl screen-glow">
+                        <div id="atm-screen" class="bg-gradient-to-br from-cyan-100 to-blue-200 h-96 w-full rounded-lg p-6 relative">
+                            {% with messages = get_flashed_messages(with_categories=true) %}
+                                {% if messages %}
+                                <div class="absolute top-4 left-4 right-4 z-10">
+                                    {% for category, message in messages %}
+                                        <div class="flash-message p-3 rounded-lg text-white font-bold 
+                                            {% if category == 'error' %} bg-red-500 
+                                            {% elif category == 'success' %} bg-green-500 
+                                            {% else %} bg-blue-500 {% endif %} shadow-lg">
+                                            {{ message }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            {% endwith %}
+                            <div class="h-full"> {% block screen %}{% endblock %} </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 grid grid-cols-2 gap-4">
+                         <div class="text-center">
+                            <p class="text-sm font-semibold text-gray-600 mb-2">RECEIPT</p>
+                            <div class="h-4 w-full slot rounded-md flex items-center justify-start pl-4">
+                                <div id="receipt-slot-light" class="slot-light"></div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-sm font-semibold text-gray-600 mb-2">CASH</p>
+                            <div class="h-8 w-full slot rounded-md flex items-center justify-start pl-4">
+                                 <div id="cash-slot-light" class="slot-light"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Right Side: Keypad -->
+                <div class="w-full md:w-1/3 flex flex-col items-center justify-center bg-gray-200 p-6 rounded-lg shadow-inner order-2 md:order-2">
+                    <div class="grid grid-cols-3 gap-3 w-full max-w-xs">
+                        <button data-key="1" class="keypad-btn text-2xl font-bold text-gray-700 h-16 rounded-lg">1</button>
+                        <button data-key="2" class="keypad-btn text-2xl font-bold text-gray-700 h-16 rounded-lg">2</button>
+                        <button data-key="3" class="keypad-btn text-2xl font-bold text-gray-700 h-16 rounded-lg">3</button>
+                        <button data-key="4" class="keypad-btn text-2xl font-bold text-gray-700 h-16 rounded-lg">4</button>
+                        <button data-key="5" class="keypad-btn text-2xl font-bold text-gray-700 h-16 rounded-lg">5</button>
+                        <button data-key="6" class="keypad-btn text-2xl font-bold text-gray-700 h-16 rounded-lg">6</button>
+                        <button data-key="7" class="keypad-btn text-2xl font-bold text-gray-700 h-16 rounded-lg">7</button>
+                        <button data-key="8" class="keypad-btn text-2xl font-bold text-gray-700 h-16 rounded-lg">8</button>
+                        <button data-key="9" class="keypad-btn text-2xl font-bold text-gray-700 h-16 rounded-lg">9</button>
+                        <button id="keypad-clear" class="h-16 rounded-lg text-white font-bold bg-yellow-500 hover:bg-yellow-600 shadow-lg transition-colors">CLEAR</button>
+                        <button data-key="0" class="keypad-btn text-2xl font-bold text-gray-700 h-16 rounded-lg">0</button>
+                        <button id="keypad-enter" class="h-16 rounded-lg text-white font-bold bg-green-500 hover:bg-green-600 shadow-lg transition-colors">ENTER</button>
+                    </div>
+                    <div class="mt-8 w-full max-w-xs text-center">
+                        <p class="text-sm font-semibold text-gray-600 mb-2">CARD SLOT</p>
+                        <div class="relative h-6 w-full slot rounded-md flex items-center justify-end pr-4">
+                            <div class="slot-light"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let focusedInput = null;
+            const screenForm = document.getElementById('screen-form');
+            if (screenForm) {
+                focusedInput = screenForm.querySelector('input.keypad-target');
+                if(focusedInput) focusedInput.focus();
+            }
+            const keypad = document.querySelector('.grid.grid-cols-3');
+            if (keypad) {
+                keypad.addEventListener('click', (event) => {
+                    const button = event.target.closest('button');
+                    if (!button || !focusedInput) return;
+                    const key = button.dataset.key;
+                    if (key) { focusedInput.value += key; } 
+                    else if (button.id === 'keypad-clear') { focusedInput.value = ''; } 
+                    else if (button.id === 'keypad-enter' && screenForm) { screenForm.submit(); }
+                });
+            }
+            document.getElementById('atm-screen').addEventListener('click', (event) => {
+                if (event.target.classList.contains('keypad-target')) { focusedInput = event.target; }
+            });
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' && document.activeElement.tagName === 'INPUT' && screenForm) {
+                    event.preventDefault(); screenForm.submit();
+                }
+            });
+
+            // --- Animation Logic ---
+            const actionTrigger = document.getElementById('action-trigger');
+            if (actionTrigger) {
+                const action = actionTrigger.dataset.action;
+                let targetLight = null;
+                if (action === 'cash') { targetLight = document.getElementById('cash-slot-light'); }
+                if (targetLight) {
+                    targetLight.classList.add('active-blink');
+                    setTimeout(() => { targetLight.classList.remove('active-blink'); }, 4000);
+                }
+            }
+            
+            // --- Receipt light blink on success ---
+            const successMessage = document.querySelector('.flash-message.bg-green-500');
+            if (successMessage) {
+                const receiptLight = document.getElementById('receipt-slot-light');
+                if (receiptLight) {
+                    receiptLight.classList.add('active-blink');
+                    setTimeout(() => { receiptLight.classList.remove('active-blink'); }, 4000);
+                }
+            }
+
+            // --- Flash Message Auto-Hide ---
+            const flashMessages = document.querySelectorAll('.flash-message');
+            flashMessages.forEach(flashMessage => {
+                setTimeout(() => {
+                    flashMessage.style.transition = 'opacity 0.5s ease';
+                    flashMessage.style.opacity = '0';
+                    setTimeout(() => flashMessage.remove(), 500); // Remove after fade out
+                }, 1500); // 1.5 second delay
+            });
+        });
+    </script>
+</body>
+</html>
+

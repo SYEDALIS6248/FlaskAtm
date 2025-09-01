@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block screen %}
+<div class="h-full flex flex-col items-center justify-center text-center">
+    <h1 class="text-3xl font-bold text-gray-800 mb-2">Deposit Cash</h1>
+    <p class="text-gray-600 mb-8">Enter amount and confirm your PIN</p>
+    
+    <form id="screen-form" method="POST" class="w-full max-w-sm">
+        <div class="mb-4">
+            <label for="amount" class="block text-gray-700 text-sm font-bold mb-2">Amount (₹):</label>
+            <input type="text" name="amount" id="amount" class="keypad-target shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-center text-2xl" required autocomplete="off" placeholder="0.00">
+        </div>
+        <div class="mb-6">
+            <label for="pin" class="block text-gray-700 text-sm font-bold mb-2">Confirm PIN:</label>
+            <input type="password" name="pin" id="pin" class="keypad-target shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-center text-2xl tracking-[.5em]" required autocomplete="off" maxlength="4" placeholder="****">
+        </div>
+        
+        <div class="flex items-center justify-between">
+             <a href="{{ url_for('dashboard') }}" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition-colors text-center mr-2">
+                CANCEL
+            </a>
+            <p class="text-xs text-gray-500 w-full text-center">Press ENTER on keypad to confirm.</p>
+        </div>
+
+        <!-- This hidden element helps trigger animations -->
+        {% if transaction_successful %}
+            <div id="action-trigger" data-action="cash"></div>
+        {% endif %}
+
+    </form>
+</div>
+{% endblock %}
+
