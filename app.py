@@ -187,6 +187,6 @@ def logout():
 
 if __name__ == "__main__":
     with app.app_context():
-        # This creates the tables if they don't exist.
+        # This is the magic line right here!
         db.create_all()
     app.run(debug=True)
